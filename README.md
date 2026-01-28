@@ -46,7 +46,19 @@ There are several approaches for Synapse + Nextflow integration:
 
 ## Installation
 
-Add the plugin to your `nextflow.config`:
+> **Note:** This plugin is not yet published to the Nextflow plugin registry. You must build and install locally.
+
+```bash
+# Clone the repo
+git clone https://github.com/adamjtaylor/nf-synapse-plugin.git
+cd nf-synapse-plugin
+
+# Build and install to ~/.nextflow/plugins
+./gradlew build
+./gradlew installPlugin
+```
+
+Then add to your `nextflow.config`:
 
 ```groovy
 plugins {
@@ -215,26 +227,9 @@ The same URI format works for both files and folders - the entity type in Synaps
 ### Build
 
 ```bash
-# Build the plugin
-./gradlew build
-
-# Run tests
-./gradlew test
-```
-
-### Install Locally
-
-```bash
-# Install to ~/.nextflow/plugins
-./gradlew installPlugin
-```
-
-After installing locally, use version pinning in your config:
-
-```groovy
-plugins {
-    id 'nf-synapse@0.1.0'
-}
+./gradlew build      # Build the plugin
+./gradlew test       # Run tests
+./gradlew installPlugin  # Install to ~/.nextflow/plugins
 ```
 
 ## Development
