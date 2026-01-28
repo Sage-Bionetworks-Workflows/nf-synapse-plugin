@@ -28,7 +28,7 @@ process FIZZBUZZ {
     path input_file
 
     output:
-    tuple env(N), path("result.txt")
+    tuple env(N), path("fizzbuzz_output.txt")
 
     script:
     """
@@ -50,7 +50,7 @@ for i in range(1, n + 1):
     else:
         results.append(str(i))
 
-with open("result.txt", "w") as f:
+with open("fizzbuzz_output.txt", "w") as f:
     f.write(", ".join(results))
 PYTHON_SCRIPT
     """
@@ -60,14 +60,14 @@ process PUBLISH_RESULT {
     publishDir "${params.outDir}/${n}", mode: 'copy'
 
     input:
-    tuple val(n), path(result)
+    tuple val(n), path(input_result)
 
     output:
     path "result.txt"
 
     script:
     """
-    cp ${result} result.txt
+    cat ${input_result} > result.txt
     """
 }
 
