@@ -57,17 +57,7 @@ jobs:
         run: |
           nextflow secrets set SYNAPSE_AUTH_TOKEN ${{ secrets.SYNAPSE_AUTH_TOKEN }}
 
-      - name: Test read (download from Synapse)
-        working-directory: validation
-        run: |
-          nextflow run main.nf --synapse_id syn26947830
-
-      - name: Test write (upload to Synapse)
-        working-directory: validation
-        run: |
-          nextflow run main_write.nf --outDir syn://syn72507092
-
-      - name: Test subfolders (FizzBuzz)
+      - name: Test read and write (FizzBuzz)
         working-directory: validation
         run: |
           nextflow run main_fizzbuzz.nf --input syn://syn72514512 --outDir syn://syn72507092
