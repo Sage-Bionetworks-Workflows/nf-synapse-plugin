@@ -16,27 +16,21 @@ A Nextflow plugin for accessing Synapse (Sage Bionetworks) files using `syn://` 
 
 There are several approaches for Synapse + Nextflow integration:
 
-| | **This plugin** | **[nf-syn](https://github.com/Sage-Bionetworks-Workflows/nf-syn)** | **nf-core modules** | **[nf-synapse workflow](https://github.com/Sage-Bionetworks-Workflows/nf-synapse)** |
-|---|-----------------|-------------------------------------------------------------------|---------------------|-----------------------------------------------------------------------------------|
-| **What it is** | Nextflow plugin | Nextflow plugin | `synapse/get` & `synapse/put` modules | Standalone Nextflow workflow |
-| **Status** | Active | Unmaintained (4+ years) | Not yet available | Active |
-| **Integration** | Native `syn://` URIs | Native `syn://` URIs | Explicit process calls | Separate workflow run before/after |
-| **Write support** | Yes (publishDir) | No (read-only) | Yes | Yes (indexing) |
-| **Data storage** | Synapse storage | Synapse storage | Synapse storage | Your cloud bucket (indexed in Synapse) |
-| **Parallelization** | Sequential | Sequential | Parallel (per process) | Parallel (per process) |
-| **nf-core compatible** | Yes | Yes | Native | Yes |
-| **Best for** | Transparent file access | Legacy pipelines | Explicit staging steps | Large-scale batch operations |
+| | **This plugin** | **[nf-syn](https://github.com/Sage-Bionetworks-Workflows/nf-syn)** | **[nf-synapse workflow](https://github.com/Sage-Bionetworks-Workflows/nf-synapse)** |
+|---|-----------------|-------------------------------------------------------------------|-----------------------------------------------------------------------------------|
+| **What it is** | Nextflow plugin | Nextflow plugin | Standalone Nextflow workflow |
+| **Status** | Active | Unmaintained (4+ years) | Active |
+| **Integration** | Native `syn://` URIs | Native `syn://` URIs | Separate workflow run before/after |
+| **Write support** | Yes (publishDir) | No (read-only) | Yes (indexing) |
+| **Data storage** | Synapse storage | Synapse storage | Your cloud bucket (indexed in Synapse) |
+| **Parallelization** | Sequential | Sequential | Parallel (per process) |
+| **Best for** | Transparent file access | Legacy pipelines | Large-scale batch operations |
 
 **Use this plugin when:**
 - You want `syn://` URIs to "just work" transparently in your pipeline
 - You're reading a few Synapse files as process inputs
 - You want to publish outputs directly to a Synapse project folder
 - You prefer simplicity over parallelization
-
-**Use nf-core modules (when available) when:**
-- You want explicit `SYNAPSE_GET` / `SYNAPSE_PUT` processes in your pipeline
-- You need parallel transfers within your workflow
-- You're building an nf-core pipeline and want standard module conventions
 
 **Use the [nf-synapse workflow](https://github.com/Sage-Bionetworks-Workflows/nf-synapse) when:**
 - You need to stage/upload many files in parallel as a separate step
