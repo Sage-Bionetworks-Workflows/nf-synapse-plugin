@@ -1,0 +1,3 @@
+rootProject.name = 'nf-synapse-plugin'
+
+include 'plugins:nf-synapse'

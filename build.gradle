@@ -1,0 +1,14 @@
+plugins {
+    id 'io.nextflow.nextflow-plugin' version '1.0.0-beta.14' apply false
+}
+
+allprojects {
+    group = 'io.nextflow'
+    version = '0.1.0'
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://s3-us-west-2.amazonaws.com/maven.seqera.io/releases' }
+    }
+}
