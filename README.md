@@ -50,7 +50,7 @@ There are several approaches for Synapse + Nextflow integration:
 
 ```bash
 # Clone the repo
-git clone https://github.com/adamjtaylor/nf-synapse-plugin.git
+git clone https://github.com/Sage-Bionetworks-Workflows/nf-synapse-plugin.git
 cd nf-synapse-plugin
 
 # Build and install to ~/.nextflow/plugins
