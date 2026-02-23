@@ -54,8 +54,7 @@ git clone https://github.com/adamjtaylor/nf-synapse-plugin.git
 cd nf-synapse-plugin
 
 # Build and install to ~/.nextflow/plugins
-./gradlew build
-./gradlew installPlugin
+make install
 ```
 
 Then add to your `nextflow.config`:
@@ -227,9 +226,10 @@ The same URI format works for both files and folders - the entity type in Synaps
 ### Build
 
 ```bash
-./gradlew build      # Build the plugin
-./gradlew test       # Run tests
-./gradlew installPlugin  # Install to ~/.nextflow/plugins
+make assemble   # Build the plugin
+make test       # Run tests
+make install    # Install to ~/.nextflow/plugins
+make release    # Publish the plugin
 ```
 
 ## Development

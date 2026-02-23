@@ -15,7 +15,7 @@ test {
 
 nextflowPlugin {
     nextflowVersion = '25.04.0'
-    provider = 'nextflow.io'
+    provider = 'Sage Bionetworks'
     description = 'Nextflow plugin for accessing Synapse files using syn:// URIs'
     className = 'nextflow.synapse.SynapsePlugin'
     extensionPoints = [
