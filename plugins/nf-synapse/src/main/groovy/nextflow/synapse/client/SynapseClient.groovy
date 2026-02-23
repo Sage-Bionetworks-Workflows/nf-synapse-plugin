@@ -246,6 +246,30 @@ class SynapseClient {
         return parseJson(response)
     }
 
+    /**
+     * Update an existing FileEntity with a new file handle (creates a new version).
+     * @param entityId The Synapse ID of the existing entity
+     * @param fileName Name of the file
+     * @param fileHandleId The new FileHandle ID
+     * @return Map containing the updated entity metadata
+     */
+    Map updateFileEntity(String entityId, String fileName, String fileHandleId) {
+        def existing = getEntity(entityId)
+        def url = "${config.endpoint}/repo/v1/entity/${entityId}"
+
+        def requestBody = [
+            concreteType: 'org.sagebionetworks.repo.model.FileEntity',
+            id: entityId,
+            name: fileName,
+            parentId: existing.parentId,
+            etag: existing.etag,
+            dataFileHandleId: fileHandleId
+        ]
+
+        def response = executePut(url, requestBody)
+        return parseJson(response)
+    }
+
     private String executeGet(String url) {
         log.debug("GET {}", url)
 

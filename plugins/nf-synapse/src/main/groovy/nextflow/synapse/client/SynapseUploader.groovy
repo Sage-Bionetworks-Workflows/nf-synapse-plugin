@@ -121,6 +121,24 @@ class SynapseUploader {
         return children?.find { it.name == folderName && it.type == 'org.sagebionetworks.repo.model.Folder' }
     }
 
+    private Map findChildFile(String parentId, String fileName) {
+        def children = client.listChildren(parentId)
+        return children?.find { it.name == fileName && it.type == 'org.sagebionetworks.repo.model.FileEntity' }
+    }
+
+    /**
+     * Create a new FileEntity or update an existing one with the given file handle.
+     */
+    private Map createOrUpdateFileEntity(String parentFolderId, String fileName, String fileHandleId) {
+        def existing = findChildFile(parentFolderId, fileName)
+        if (existing != null) {
+            def entityId = existing.id as String
+            log.info("File '{}' already exists ({}), uploading as new version", fileName, entityId)
+            return client.updateFileEntity(entityId, fileName, fileHandleId)
+        }
+        return client.createFileEntity(parentFolderId, fileName, fileHandleId)
+    }
+
     /**
      * Upload a file to a Synapse folder.
      * @param sourceFile Path to the local file to upload
@@ -177,7 +195,7 @@ class SynapseUploader {
         if (uploadStatus == 'COMPLETED') {
             log.info("Upload already completed (file exists in Synapse)")
             def fileHandleId = upload.resultFileHandleId as String
-            def entity = client.createFileEntity(parentFolderId, fileName, fileHandleId)
+            def entity = createOrUpdateFileEntity(parentFolderId, fileName, fileHandleId)
             return entity.id as String
         }
 
@@ -195,8 +213,8 @@ class SynapseUploader {
 
         log.debug("Upload complete, file handle: {}", fileHandleId)
 
-        // Step 4: Create FileEntity
-        def entity = client.createFileEntity(parentFolderId, fileName, fileHandleId)
+        // Step 4: Create or update FileEntity
+        def entity = createOrUpdateFileEntity(parentFolderId, fileName, fileHandleId)
         def entityId = entity.id as String
 
         log.info("Created FileEntity {} in folder {}", entityId, parentFolderId)
