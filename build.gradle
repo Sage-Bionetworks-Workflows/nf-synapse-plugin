@@ -1,14 +1,31 @@
 plugins {
-    id 'io.nextflow.nextflow-plugin' version '1.0.0-beta.14' apply false
+    id 'io.nextflow.nextflow-plugin' version '1.0.0-beta.14'
 }
 
-allprojects {
-    group = 'io.nextflow'
-    version = '0.1.0'
+group = 'io.nextflow'
+version = '0.1.0'
 
-    repositories {
-        mavenCentral()
-        maven { url 'https://jitpack.io' }
-        maven { url 'https://s3-us-west-2.amazonaws.com/maven.seqera.io/releases' }
-    }
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+    maven { url 'https://s3-us-west-2.amazonaws.com/maven.seqera.io/releases' }
+}
+
+dependencies {
+    testImplementation 'org.spockframework:spock-core:2.3-groovy-3.0'
+    testImplementation 'org.wiremock:wiremock:3.3.1'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+nextflowPlugin {
+    nextflowVersion = '25.04.0'
+    provider = 'Sage Bionetworks'
+    description = 'Nextflow plugin for accessing Synapse files using syn:// URIs'
+    className = 'nextflow.synapse.SynapsePlugin'
+    extensionPoints = [
+        'nextflow.synapse.SynapsePathFactory'
+    ]
 }

@@ -28,7 +28,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: nf-synapse-plugin
-          path: plugins/nf-synapse/build/distributions/nf-synapse-*.zip
+          path: build/distributions/nf-synapse-*.zip
 
   integration:
     name: Integration tests
