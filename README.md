@@ -46,6 +46,24 @@ There are several approaches for Synapse + Nextflow integration:
 
 ## Installation
 
+### From the Nextflow plugin registry (recommended)
+
+Add to your `nextflow.config`:
+
+```groovy
+plugins {
+    id 'nf-synapse@0.1.1'
+}
+
+synapse {
+    authToken = secrets.SYNAPSE_AUTH_TOKEN
+}
+```
+
+Nextflow will automatically download the plugin from the [Nextflow plugin registry](https://registry.nextflow.io) — no manual installation required.
+
+### Local install
+
 ```bash
 # Clone the repo
 git clone https://github.com/Sage-Bionetworks-Workflows/nf-synapse-plugin.git
@@ -59,7 +77,7 @@ Then add to your `nextflow.config`:
 
 ```groovy
 plugins {
-    id 'nf-synapse@0.1.0'
+    id 'nf-synapse@0.1.1'
 }
 
 synapse {
