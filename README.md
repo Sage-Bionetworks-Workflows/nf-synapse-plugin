@@ -101,7 +101,6 @@ You can create a Personal Access Token at: https://www.synapse.org/#!PersonalAcc
 
 ```groovy
 synapse {
-    authToken = secrets.SYNAPSE_AUTH_TOKEN
     endpoint = 'https://repo-prod.prod.sagebase.org'  // default
 }
 ```
