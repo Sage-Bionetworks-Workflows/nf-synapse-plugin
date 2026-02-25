@@ -54,10 +54,6 @@ Add to your `nextflow.config`:
 plugins {
     id 'nf-synapse@0.1.1'
 }
-
-synapse {
-    authToken = secrets.SYNAPSE_AUTH_TOKEN
-}
 ```
 
 Nextflow will automatically download the plugin from the [Nextflow plugin registry](https://registry.nextflow.io) — no manual installation required.
@@ -79,10 +75,6 @@ Then add to your `nextflow.config`:
 plugins {
     id 'nf-synapse@0.1.1'
 }
-
-synapse {
-    authToken = secrets.SYNAPSE_AUTH_TOKEN
-}
 ```
 
 ## Configuration
@@ -96,6 +88,14 @@ nextflow secrets set SYNAPSE_AUTH_TOKEN syn_pat_xxxxxxxxxx
 ```
 
 You can create a Personal Access Token at: https://www.synapse.org/#!PersonalAccessTokens:
+
+The plugin automatically looks for a secret named `SYNAPSE_AUTH_TOKEN`. No additional config is required unless you want to use a different secret name:
+
+```groovy
+synapse {
+    authToken = secrets.MY_OTHER_TOKEN
+}
+```
 
 ### Optional Settings
 
