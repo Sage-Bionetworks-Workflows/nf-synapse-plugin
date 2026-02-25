@@ -46,8 +46,6 @@ There are several approaches for Synapse + Nextflow integration:
 
 ## Installation
 
-> **Note:** This plugin is not yet published to the Nextflow plugin registry. You must build and install locally.
-
 ```bash
 # Clone the repo
 git clone https://github.com/Sage-Bionetworks-Workflows/nf-synapse-plugin.git
@@ -231,6 +229,11 @@ make test       # Run tests
 make install    # Install to ~/.nextflow/plugins
 make release    # Publish the plugin
 ```
+
+## Releasing
+
+1. [Create a new GitHub release](https://github.com/Sage-Bionetworks-Workflows/nf-synapse-plugin/releases/new) with the version as the tag (e.g. `0.2.0`) — no `v` prefix
+2. Publishing the release triggers the release workflow, which publishes the plugin to the [Nextflow plugin registry](https://registry.nextflow.io)
 
 ## Development
 
