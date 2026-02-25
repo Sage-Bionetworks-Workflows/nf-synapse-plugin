@@ -235,6 +235,8 @@ make release    # Publish the plugin
 1. [Create a new GitHub release](https://github.com/Sage-Bionetworks-Workflows/nf-synapse-plugin/releases/new) with the version as the tag (e.g. `0.2.0`) — no `v` prefix
 2. Publishing the release triggers the release workflow, which publishes the plugin to the [Nextflow plugin registry](https://registry.nextflow.io)
 
+> **Note:** The release workflow requires a `NPR_API_KEY` secret to be set in the repository settings. This is the access token from the [Nextflow plugin registry](https://registry.nextflow.io).
+
 ## Development
 
 ### Project Structure
