@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'io.nextflow'
-version = '0.1.0'
+version = System.getenv('PLUGIN_VERSION') ?: '0.1.0'
 
 repositories {
     mavenCentral()
