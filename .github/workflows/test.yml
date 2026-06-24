@@ -31,10 +31,16 @@ jobs:
           path: build/distributions/nf-synapse-*.zip
 
   integration:
-    name: Integration tests
+    name: Integration tests (NF ${{ matrix.nxf_ver }})
     needs: build
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    strategy:
+      fail-fast: false
+      matrix:
+        # Test against the minimum supported version (build.gradle nextflowVersion)
+        # and the latest stable release.
+        nxf_ver: ['25.04.0', 'latest-stable']
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,6 +53,8 @@ jobs:
 
       - name: Setup Nextflow
         uses: nf-core/setup-nextflow@v2
+        with:
+          version: ${{ matrix.nxf_ver }}
 
       - name: Build and install plugin
         run: |
