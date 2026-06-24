@@ -158,6 +158,34 @@ Channel.fromPath('samplesheet.csv')
 samples_ch.view { sample_id, f -> "Sample: ${sample_id}, File: ${f.name}" }
 ```
 
+### With nf-core Samplesheets (filename pattern validation)
+
+Many nf-core pipelines validate samplesheet columns with [nf-schema](https://nextflow-io.github.io/nf-schema/) and require file paths to match an extension pattern. For example, nf-core/rnaseq requires `fastq_1`/`fastq_2` to match:
+
+```
+^([\S\s]*\/)?[^\s\/]+\.f(ast)?q\.gz$
+```
+
+This pattern is checked against the **raw string** in the samplesheet, *before* the path is resolved — so a bare `syn://syn1234567` is rejected (it doesn't end in `.fastq.gz`), even though the file itself exists and is a valid fastq.
+
+To satisfy the pattern without modifying the pipeline's schema, append a **decorative extension** to the Synapse URI. The plugin matches and discards any trailing extension after the `synId` (and optional `.version`), so the URI still resolves to the underlying entity:
+
+```csv
+sample,fastq_1,fastq_2,strandedness
+SAMPLE1,syn://syn1234567.fastq.gz,syn://syn1234568.fastq.gz,auto
+SAMPLE2,syn://syn1234569.5.fastq.gz,syn://syn1234570.5.fastq.gz,auto
+```
+
+Here `syn://syn1234567.fastq.gz` resolves to exactly the same entity as `syn://syn1234567` — the `.fastq.gz` suffix exists only to satisfy the pattern check. All three nf-schema checks pass:
+
+| Check | Why it passes |
+|-------|---------------|
+| `pattern` | the raw string ends in `.fastq.gz` |
+| `exists` | resolves to the Synapse entity and confirms it exists (via this plugin) |
+| `format: file-path` | the resolved entity is a file, not a directory |
+
+The extension is **only** used to pass validation. When the file is staged into a task, it keeps its **original Synapse filename** (fetched from entity metadata), not the decorative one. Ensure the real Synapse files are genuinely gzipped fastqs so downstream tooling behaves as expected. Any extension works (`.fastq.gz`, `.fq.gz`, `.bam`, …) including multi-part extensions, so you can pick whatever the pipeline's pattern requires.
+
 ### Publishing to Synapse
 
 Use `publishDir` to upload pipeline outputs to a Synapse folder:
@@ -215,6 +243,7 @@ For example, publishing to `syn://syn25858544/sample1/results/output.txt` will:
 |--------|-------------|----------|
 | `syn://syn1234567` | File entity (latest version) | Reading files |
 | `syn://syn1234567.5` | File entity (specific version) | Reading versioned files |
+| `syn://syn1234567.fastq.gz` | File entity with decorative extension (ignored) | Satisfying nf-core/nf-schema filename patterns |
 | `syn://syn1234567` | Folder entity | Writing/publishing files |
 | `syn://syn1234567/subdir/file.txt` | File within folder | Writing to subfolders |
 

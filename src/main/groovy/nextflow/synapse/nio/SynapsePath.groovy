@@ -17,13 +17,23 @@ import java.util.regex.Pattern
  * Supports formats:
  * - syn://syn1234567 (latest version of file or folder entity)
  * - syn://syn1234567.5 (specific version of file entity)
+ * - syn://syn1234567.fastq.gz (entity with a decorative extension - ignored)
+ * - syn://syn1234567.5.fastq.gz (versioned entity with a decorative extension)
  * - syn://syn1234567/filename.txt (file within a folder - for uploads)
+ *
+ * The decorative extension lets a samplesheet value satisfy a pipeline's
+ * filename pattern (e.g. nf-core's ^...\.f(ast)?q\.gz$, validated against the
+ * raw string) while still resolving to the underlying entity. Any trailing
+ * extension after the synId (and optional .version) is matched and discarded.
  */
 @CompileStatic
 class SynapsePath implements Path {
 
-    // Pattern for entity-only URIs: syn1234567 or syn1234567.5
-    private static final Pattern SYNAPSE_ID_PATTERN = ~/^syn(\d+)(\.(\d+))?$/
+    // Pattern for entity URIs: syn1234567, syn1234567.5 (version), optionally
+    // followed by a decorative extension that is matched and ignored, e.g.
+    // syn1234567.fastq.gz or syn1234567.5.fastq.gz. The first .<digits> after the
+    // id is the version; any remaining dotted suffix is a (multi-part) extension.
+    private static final Pattern SYNAPSE_ID_PATTERN = ~/^syn(\d+)(?:\.(\d+))?(?:\.[^\/\s]+)?$/
 
     // Pattern for folder/filename URIs: syn1234567/filename.txt
     private static final Pattern SYNAPSE_FOLDER_FILE_PATTERN = ~/^syn(\d+)\/(.+)$/
@@ -60,12 +70,13 @@ class SynapsePath implements Path {
         if (!matcher.matches()) {
             throw new IllegalArgumentException(
                 "Invalid Synapse URI: ${uri}. " +
-                "Expected format: syn://syn1234567, syn://syn1234567.5, or syn://syn1234567/filename.txt"
+                "Expected format: syn://syn1234567, syn://syn1234567.5, " +
+                "syn://syn1234567.fastq.gz, or syn://syn1234567/filename.txt"
             )
         }
 
         this.synId = "syn${matcher.group(1)}"
-        this.version = matcher.group(3) ? Integer.parseInt(matcher.group(3)) : null
+        this.version = matcher.group(2) ? Integer.parseInt(matcher.group(2)) : null
         this.fileName = null
     }
 
