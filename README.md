@@ -168,7 +168,7 @@ Many nf-core pipelines validate samplesheet columns with [nf-schema](https://nex
 
 This pattern is checked against the **raw string** in the samplesheet, *before* the path is resolved — so a bare `syn://syn1234567` is rejected (it doesn't end in `.fastq.gz`), even though the file itself exists and is a valid fastq.
 
-To satisfy the pattern without modifying the pipeline's schema, append a **decorative extension** to the Synapse URI. The plugin matches and discards any trailing extension after the `synId` (and optional `.version`), so the URI still resolves to the underlying entity:
+To satisfy the pattern without modifying the pipeline's schema, append a **decorative extension** to the Synapse URI (requires nf-synapse 0.1.3+). The plugin matches and discards any trailing extension after the `synId` (and optional `.version`), so the URI still resolves to the underlying entity:
 
 ```csv
 sample,fastq_1,fastq_2,strandedness
@@ -185,6 +185,20 @@ Here `syn://syn1234567.fastq.gz` resolves to exactly the same entity as `syn://s
 | `format: file-path` | the resolved entity is a file, not a directory |
 
 The extension is **only** used to pass validation. When the file is staged into a task, it keeps its **original Synapse filename** (fetched from entity metadata), not the decorative one. Ensure the real Synapse files are genuinely gzipped fastqs so downstream tooling behaves as expected. Any extension works (`.fastq.gz`, `.fq.gz`, `.bam`, …) including multi-part extensions, so you can pick whatever the pipeline's pattern requires.
+
+### Running on Seqera Platform (AWS Batch)
+
+Two things commonly trip up plugin runs on Seqera Platform / AWS Batch.
+
+**1. The token must reach the *head job*.** The plugin resolves `syn://` URIs during samplesheet validation (the `exists` check) and during file staging — **both run in the Nextflow head job, not in tasks.** By design, Seqera's AWS Batch head-job IAM role is granted only `secretsmanager:ListSecrets`, *not* `secretsmanager:GetSecretValue`. So an attached workspace/pipeline secret (and `secrets.SYNAPSE_AUTH_TOKEN`) is **not** readable by the plugin in the head job — you get `Synapse authentication token not configured` even though the secret is attached. (Platform secrets are injected as env vars into *tasks* via the ECS execution role, which is why most pipelines work — but this plugin needs the token earlier, in the head job.) Provide it to the head job by one of:
+
+- **Pre-run script** (simplest): set the run's pre-run script to `export SYNAPSE_AUTH_TOKEN=<token>`. The plugin reads it from the environment.
+- **Compute-environment environment variable**: define `SYNAPSE_AUTH_TOKEN` on the CE with head-job scope.
+- **Grant the head-job role** `secretsmanager:GetSecretValue` on `arn:aws:secretsmanager:*:*:secret:tower-*`, after which a normal attached pipeline secret resolves in the head job.
+
+Avoid `synapse { authToken = secrets.SYNAPSE_AUTH_TOKEN }` in config on AWS Batch unless the head-job role has `GetSecretValue` — it forces an eager Secrets Manager call the default role cannot make, failing config parsing.
+
+**2. Staging happens on the head job, serially.** Each `syn://` input is downloaded onto the single head-job instance (Nextflow `FilePorter`) *before* its task can dispatch, so task fan-out is gated by those downloads — dispatch drips out as files land, bottlenecked by the largest files and the head job's single-instance bandwidth. This is fine for small/ad-hoc runs. For large or numerous inputs — or inputs reused across multiple pipeline runs — pre-stage them to your cloud bucket **in parallel** with the [nf-synapse workflow](https://github.com/Sage-Bionetworks-Workflows/nf-synapse) (SYNSTAGE) and run the pipeline on the resulting `s3://`/`gs://` paths. Those are native to Nextflow (no head-job copy), so all tasks dispatch at once. Rule of thumb: **direct `syn://` for convenience and small jobs; pre-stage for scale and reuse.**
 
 ### Publishing to Synapse
 
