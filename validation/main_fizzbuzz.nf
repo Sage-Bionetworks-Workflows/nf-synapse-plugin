@@ -57,17 +57,23 @@ PYTHON_SCRIPT
 }
 
 process PUBLISH_RESULT {
-    publishDir { "${params.outDir}/${n}" }, mode: 'copy'
+    // Publish to a static directory and put the dynamic subfolder in the output
+    // path. Referencing an input var directly in the publishDir directive is not
+    // portable across Nextflow runtimes (plain-string works on 25.10 but not 26.x;
+    // the closure form is the reverse), whereas output-path interpolation works on
+    // both and still exercises the plugin's nested-folder creation.
+    publishDir params.outDir, mode: 'copy'
 
     input:
     tuple val(n), path(input_result)
 
     output:
-    path "result.txt"
+    path "${n}/result.txt"
 
     script:
     """
-    cat ${input_result} > result.txt
+    mkdir -p ${n}
+    cat ${input_result} > ${n}/result.txt
     """
 }
 

@@ -37,6 +37,9 @@ jobs:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     strategy:
       fail-fast: false
+      # Both legs publish to the same Synapse folder; run them one at a time
+      # to avoid concurrent folder-creation races.
+      max-parallel: 1
       matrix:
         # Test against the minimum supported version (build.gradle nextflowVersion)
         # and the latest stable release.
