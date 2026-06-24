@@ -40,7 +40,7 @@ jobs:
       matrix:
         # Test against the minimum supported version (build.gradle nextflowVersion)
         # and the latest stable release.
-        nxf_ver: ['25.04.0', 'latest-stable']
+        nxf_ver: ['25.10.0', 'latest-stable']
     steps:
       - name: Checkout
         uses: actions/checkout@v4

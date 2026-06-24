@@ -42,7 +42,7 @@ There are several approaches for Synapse + Nextflow integration:
 
 ## Requirements
 
-- Nextflow 25.04.0+
+- Nextflow 25.10.0+
 
 ## Installation
 
