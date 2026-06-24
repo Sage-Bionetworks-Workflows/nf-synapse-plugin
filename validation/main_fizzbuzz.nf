@@ -57,7 +57,7 @@ PYTHON_SCRIPT
 }
 
 process PUBLISH_RESULT {
-    publishDir "${params.outDir}/${n}", mode: 'copy'
+    publishDir { "${params.outDir}/${n}" }, mode: 'copy'
 
     input:
     tuple val(n), path(input_result)
