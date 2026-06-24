@@ -28,7 +28,7 @@ process FIZZBUZZ {
     path input_file
 
     output:
-    tuple env(N), path("fizzbuzz_output.txt")
+    tuple env('N'), path("fizzbuzz_output.txt")
 
     script:
     """
