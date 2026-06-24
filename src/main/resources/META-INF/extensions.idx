@@ -1,1 +1,2 @@
 nextflow.synapse.SynapsePathFactory
+nextflow.synapse.SynapseConfigScope

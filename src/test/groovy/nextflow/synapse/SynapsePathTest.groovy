@@ -36,6 +36,26 @@ class SynapsePathTest extends Specification {
     }
 
     @Unroll
+    def "should parse entity URI with decorative extension: #uri"() {
+        when:
+        def path = new SynapsePath(fileSystem, uri)
+
+        then:
+        path.synId == expectedSynId
+        path.version == expectedVersion
+        !path.isFolderFilePath()
+
+        where:
+        uri                           | expectedSynId | expectedVersion
+        'syn://syn1234567.fastq.gz'   | 'syn1234567'  | null
+        'syn://syn1234567.fq.gz'      | 'syn1234567'  | null
+        'syn://syn1234567.bam'        | 'syn1234567'  | null
+        'syn://syn1234567.5.fastq.gz' | 'syn1234567'  | 5
+        'syn://syn1234567.tar.gz.bz2' | 'syn1234567'  | null
+        'syn1234567.fastq.gz'         | 'syn1234567'  | null
+    }
+
+    @Unroll
     def "should parse folder/file URI: #uri"() {
         when:
         def path = new SynapsePath(fileSystem, uri)
@@ -66,9 +86,7 @@ class SynapsePathTest extends Specification {
             'syn://invalid',
             'syn://syn',
             'syn://synABC',
-            's3://bucket/key',
-            'syn://syn1234567.abc',
-            'syn://syn1234567.1.2'
+            's3://bucket/key'
         ]
     }
 
