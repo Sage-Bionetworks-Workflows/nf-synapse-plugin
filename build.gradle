@@ -26,6 +26,7 @@ nextflowPlugin {
     description = 'Nextflow plugin for accessing Synapse files using syn:// URIs'
     className = 'nextflow.synapse.SynapsePlugin'
     extensionPoints = [
-        'nextflow.synapse.SynapsePathFactory'
+        'nextflow.synapse.SynapsePathFactory',
+        'nextflow.synapse.SynapseConfigScope'
     ]
 }
